@@ -1,7 +1,7 @@
 GOPACKAGES=$(shell go list ./...)
 GOPACKAGES=$(shell go list ./...)
 COVERPKG?=$(shell go list ./pkg/...)
-BENCHPKG?=./pkg/seed
+BENCHPKG?=$(shell go list ./pkg/...)
 
 deps:
 	@go mod download
@@ -13,7 +13,7 @@ race: deps
 	@go test -race $(GOPACKAGES)
 
 bench: deps
-	@go test -bench=. -benchmem -cpuprofile cpu.prof -memprofile mem.prof ${BENCHPKG} 
+	@go test -bench=. -benchmem ${BENCHPKG} 
 
 coverage: deps
 	@go test -cover -coverprofile cover.out $(COVERPKG)
