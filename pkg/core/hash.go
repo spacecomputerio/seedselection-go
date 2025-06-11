@@ -21,7 +21,7 @@ func ComputeHash(name string, seed []byte, seq uint64) []byte {
 
 // pool for sha256 hasher to avoid frequent allocations
 // and deallocations, which can be expensive in high-load scenarios.
-// It is used to get a hasher for computing the hash of the peer selection function.
+// It is used to get a hasher for computing the hash of the seed selection function.
 var hasherPool = sync.Pool{
 	New: func() interface{} {
 		return sha256.New()
