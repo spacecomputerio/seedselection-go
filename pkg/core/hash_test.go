@@ -1,8 +1,11 @@
 package core
 
 import (
+	"encoding/hex"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestComputeHash(t *testing.T) {
@@ -39,14 +42,8 @@ func TestComputeHash(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			result := ComputeHash(tt.name, tt.seed, tt.seq)
-			resultHex := make([]byte, len(result)*2)
-			for i, b := range result {
-				resultHex[i*2] = "0123456789abcdef"[b>>4]
-				resultHex[i*2+1] = "0123456789abcdef"[b&0x0f]
-			}
-			if string(resultHex) != tt.expectedHex {
-				t.Errorf("expected %s, got %s", tt.expectedHex, string(resultHex))
-			}
+			resultHex := hex.EncodeToString(result)
+			require.Equal(t, tt.expectedHex, string(resultHex), "Hash mismatch")
 		})
 	}
 }
