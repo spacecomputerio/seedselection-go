@@ -6,9 +6,10 @@
 
 ## Overview
 
-This package provides a simple and effective ways to implement deterministic selection in distributed systems. It is designed to be easy to use and integrate into existing networks, ensuring that all peers agree on the same leader/s without the need for a central authority
+This package provides a simple and effective ways to implement deterministic selection in distributed systems. It is designed to be easy to use and integrate into existing networks, ensuring that all peers come up with the same selection (for the same input) without introducing network calls or the need for a central authority.
+The focus is on random seeds to provide fair selection and good distribution.
 
-The focus is on RNG (Random Number Generation) based peer selection, where we aim to use SpaceComputer's [orbitport](https://docs.spacecomputer.io/orbitport) as a source of randomness.
+**BONUS** We encourage users to use SpaceComputer's [orbitport](https://docs.spacecomputer.io/orbitport) as a source of randomness.
 
 ## Usage
 
