@@ -70,7 +70,7 @@ func TestXorDistanceSelection(t *testing.T) {
 				copy(peerset, peerIDS[0:5])
 				return peerset
 			}(),
-			expected:    []string{peerIDS[3], peerIDS[1], peerIDS[2]},
+			expected:    []string{peerIDS[3], peerIDS[4], peerIDS[1]},
 			expectedErr: false,
 		},
 		{
@@ -84,7 +84,7 @@ func TestXorDistanceSelection(t *testing.T) {
 				copy(peerset, peerIDS[0:5])
 				return peerset
 			}(),
-			expected:    []string{peerIDS[3], peerIDS[0], peerIDS[1]},
+			expected:    []string{peerIDS[3], peerIDS[4], peerIDS[0]},
 			expectedErr: false,
 		},
 		{
@@ -125,7 +125,7 @@ func TestXorDistanceSelection(t *testing.T) {
 			},
 			expected: []string{
 				"e42bbf8533f4f0b1d44e7fc1c9ac54a6ac368642dd1b8a10a1775255eed0c31a",
-				"698750a09b934337746f0973448167f364cae132e2f8b327ae4913e5b5445029",
+				"a7a0243e04fd71dc10068134a7dc0ab6de6e3cb76439400d17e6d531a5e596b1",
 			},
 		},
 	}

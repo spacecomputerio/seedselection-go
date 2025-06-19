@@ -83,7 +83,7 @@ func (h *maxDistanceHeap) PushUpToN(entry heapEntry, n int) {
 	if h.Len() < n {
 		heap.Push(h, entry)
 	} else {
-		last := (*h)[h.Len()-1] // Get the largest element in the max-heaps
+		last := (*h)[0] // Get the largest element in the max-heaps
 		// If the current distance is smaller than the largest distance in the heap (root of max-heap)
 		if entry.distance < last.distance {
 			heap.Pop(h)         // Remove the current largest
