@@ -1,8 +1,10 @@
 # seedselection-go
 
-**WARNING: This project is experimental and work-in-progress, DO NOT USE IN PRODUCTION.**
+**WARNING: This project is experimental and work-in-progress, use at your own risk!**
 
 ![Build & Test (Core)](https://github.com/spacecomputerio/seedselection-go/actions/workflows/build_test.yml/badge.svg?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/github.com/spacecomputerio/seedselection-go)](https://goreportcard.com/report/github.com/spacecomputerio/seedselection-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/spacecomputerio/seedselection-go.svg)](https://pkg.go.dev/github.com/spacecomputerio/seedselection-go)
 
 ## Overview
 
