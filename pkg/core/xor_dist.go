@@ -2,6 +2,7 @@ package core
 
 import (
 	"container/heap"
+	"hash"
 	"math/big"
 )
 
@@ -9,7 +10,7 @@ import (
 // The hash(name, seed, seq, n) will be used for ordering the items according to the xor distance, where the closest n ids will be selected.
 // For optimization, a max-heap is used to maintain the n ids with the smallest xor distances from the hash value.
 // If n is greater than the number of ids, all ids will be elected.
-func XorDistanceSelection(name string, seed []byte, seq uint64, n int, ids []string) ([]string, error) {
+func XorDistanceSelection(hasher hash.Hash, name string, seed []byte, seq uint64, n int, ids []string) ([]string, error) {
 	p := len(ids)
 	if p == 0 {
 		return nil, nil
@@ -17,7 +18,7 @@ func XorDistanceSelection(name string, seed []byte, seq uint64, n int, ids []str
 	if n >= p {
 		return ids, nil
 	}
-	hash := ComputeHash(name, seed, seq)
+	hash := ComputeHash(hasher, name, seed, seq)
 	hashValue := new(big.Int).SetBytes(hash)
 
 	maxHeap := newMaxDistanceHeap()

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"sync"
 	"testing"
@@ -41,7 +42,7 @@ func TestComputeHash(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			result := ComputeHash(tt.name, tt.seed, tt.seq)
+			result := ComputeHash(sha256.New(), tt.name, tt.seed, tt.seq)
 			resultHex := hex.EncodeToString(result)
 			require.Equal(t, tt.expectedHex, string(resultHex), "Hash mismatch")
 		})
@@ -54,7 +55,7 @@ func TestHasherPool(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			_ = ComputeHash("test", []byte("seed"), uint64(i))
+			_ = ComputeHash(nil, "test", []byte("seed"), uint64(i))
 		}(i)
 	}
 	wg.Wait()

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"testing"
 
@@ -136,7 +137,7 @@ func TestXorDistanceSelection(t *testing.T) {
 			if name == "" {
 				name = "test"
 			}
-			actual, err := XorDistanceSelection(name, tt.seed, tt.seq, tt.n, tt.peerset)
+			actual, err := XorDistanceSelection(sha256.New(), name, tt.seed, tt.seq, tt.n, tt.peerset)
 			if tt.expectedErr {
 				require.Error(t, err)
 			} else {
@@ -166,7 +167,7 @@ func benchmarkXorDistanceSelection(b *testing.B, p, n int) {
 	peerset := generatePeerset(p)
 
 	for i := 0; b.Loop(); i++ {
-		_, err := XorDistanceSelection("benchmark_service", []byte("benchmark_election_seed"), uint64(i), n, peerset)
+		_, err := XorDistanceSelection(sha256.New(), "benchmark_service", []byte("benchmark_election_seed"), uint64(i), n, peerset)
 		if err != nil {
 			b.Fatalf("XorDistanceSelection failed: %v", err)
 		}
