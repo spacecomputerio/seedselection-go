@@ -30,6 +30,7 @@ func TestXorDistanceSelection(t *testing.T) {
 		seq         uint64
 		n           int
 		peerset     []string
+		weights     []int64 // optional weights for the peers
 		expected    []string
 		expectedErr bool
 	}{
@@ -111,7 +112,7 @@ func TestXorDistanceSelection(t *testing.T) {
 			expectedErr: false,
 		},
 		{
-			name:    "with 32-byte peer IDs",
+			name:    "with 32-byte IDs",
 			rngName: "testgroup-1",
 			seed:    []byte("test-seed"),
 			seq:     10,
@@ -129,6 +130,27 @@ func TestXorDistanceSelection(t *testing.T) {
 				"a7a0243e04fd71dc10068134a7dc0ab6de6e3cb76439400d17e6d531a5e596b1",
 			},
 		},
+		{
+			name:    "with 32-byte IDs and weights",
+			rngName: "testgroup-1",
+			seed:    []byte("test-seed"),
+			seq:     10,
+			n:       3,
+			peerset: []string{
+				"698750a09b934337746f0973448167f364cae132e2f8b327ae4913e5b5445029",
+				"3b213ced003e89b35a26c22cbd011c9bfab29578415b2069f7fc8b01998b903d",
+				"e42bbf8533f4f0b1d44e7fc1c9ac54a6ac368642dd1b8a10a1775255eed0c31a",
+				"a7a0243e04fd71dc10068134a7dc0ab6de6e3cb76439400d17e6d531a5e596b1",
+				"b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4g5h6i7j8k9l0m1n2o",
+				"c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4g5h6i7j8k9l0m1n2o3p4",
+			},
+			weights: []int64{1, 10, 10, 1, 100},
+			expected: []string{
+				"b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4g5h6i7j8k9l0m1n2o",
+				"e42bbf8533f4f0b1d44e7fc1c9ac54a6ac368642dd1b8a10a1775255eed0c31a",
+				"3b213ced003e89b35a26c22cbd011c9bfab29578415b2069f7fc8b01998b903d",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -137,7 +159,7 @@ func TestXorDistanceSelection(t *testing.T) {
 			if name == "" {
 				name = "test"
 			}
-			actual, err := XorDistanceSelection(sha256.New(), name, tt.seed, tt.seq, tt.n, tt.peerset)
+			actual, err := XorDistanceSelection(name, tt.seed, tt.seq, tt.n, tt.peerset, WithHasher(sha256.New()), WithWeights(tt.weights))
 			if tt.expectedErr {
 				require.Error(t, err)
 			} else {
@@ -167,7 +189,7 @@ func benchmarkXorDistanceSelection(b *testing.B, p, n int) {
 	peerset := generatePeerset(p)
 
 	for i := 0; b.Loop(); i++ {
-		_, err := XorDistanceSelection(sha256.New(), "benchmark_service", []byte("benchmark_election_seed"), uint64(i), n, peerset)
+		_, err := XorDistanceSelection("benchmark_service", []byte("benchmark_election_seed"), uint64(i), n, peerset, WithHasher(sha256.New()))
 		if err != nil {
 			b.Fatalf("XorDistanceSelection failed: %v", err)
 		}
