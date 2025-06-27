@@ -48,7 +48,7 @@ func main() {
 	round := uint64(1)
 	n := 2
 	// Create a new peer selection instance
-	selected, err := seedselection.XorDistanceSelection(sha256.New(), "testgroup", rand, round, n, peerIDS)
+	selected, err := seedselection.XorDistanceSelection("testgroup", rand, round, n, peerIDS, seedselection.WithHasher(sha256.New()))
 	if err != nil {
 		log.Fatalf("Failed to create peer selection: %v", err)
 	}
