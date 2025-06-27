@@ -2,7 +2,6 @@ package core
 
 import (
 	"container/heap"
-	"hash"
 	"math/big"
 )
 
@@ -10,27 +9,34 @@ import (
 // The hash(name, seed, seq, n) will be used for ordering the items according to the xor distance, where the closest n ids will be selected.
 // For optimization, a max-heap is used to maintain the n ids with the smallest xor distances from the hash value.
 // If n is greater than the number of ids, all ids will be elected.
-func XorDistanceSelection(hasher hash.Hash, name string, seed []byte, seq uint64, n int, ids []string) ([]string, error) {
-	p := len(ids)
-	if p == 0 {
+// opts allows for additional configuration, such as custom hash function or weights for each id.
+// The weights are used to scale the xor distance, allowing for weighted selection of ids.
+func XorDistanceSelection(name string, seed []byte, seq uint64, n int, items []string, opts ...Opt) ([]string, error) {
+	o := NewOptions(opts...)
+	nItems := len(items)
+	if nItems == 0 {
 		return nil, nil
 	}
-	if n >= p {
-		return ids, nil
+	if n >= nItems {
+		return items, nil
 	}
-	hash := ComputeHash(hasher, name, seed, seq)
+	hash := ComputeHash(o.hasher, name, seed, seq)
 	hashValue := new(big.Int).SetBytes(hash)
-
 	maxHeap := newMaxDistanceHeap()
+
 	// creating reusable big.Ints to hold the id and xor distance values
 	itemValue := new(big.Int)
 	distanceVal := new(big.Int)
-	for _, item := range ids {
+	for i, item := range items {
 		itemValue.SetBytes([]byte(item))
 		distanceVal.Xor(hashValue, itemValue)
+		distance := distanceVal.Uint64()
+		if len(o.weights) > i && o.weights[i] > 0 {
+			distance = distance / uint64(o.weights[i])
+		}
 		maxHeap.PushUpToN(heapEntry{
-			id:       item,
-			distance: distanceVal.Uint64(),
+			item:     item,
+			distance: distance,
 		}, n)
 	}
 
@@ -39,7 +45,7 @@ func XorDistanceSelection(hasher hash.Hash, name string, seed []byte, seq uint64
 
 // heapEntry is an internal struct that holds an id and its xor distance from a hash value.
 type heapEntry struct {
-	id       string
+	item     string
 	distance uint64
 }
 
@@ -99,7 +105,7 @@ func (h *maxDistanceHeap) List() []string {
 	ids := make([]string, h.Len())
 	for i := h.Len() - 1; i >= 0; i-- {
 		entry := heap.Pop(h).(heapEntry)
-		ids[i] = entry.id
+		ids[i] = entry.item
 	}
 	return ids
 }
